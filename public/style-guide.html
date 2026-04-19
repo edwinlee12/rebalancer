@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rebalancer Style Guide</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
+
+    /* ─── TOKENS (Light) ─── */
+    :root {
+      --bg: #FAFAF7;
+      --surface: #FFFFFF;
+      --text: #1a1a1a;
+      --text-muted: #6b7280;
+      --border: #e5e5e5;
+      --accent: #0D9488;
+      --accent-hover: #0f766e;
+      --accent-light: #ccfbf1;
+      --live-blue: #2563EB;
+      --live-blue-light: #dbeafe;
+      --gain: #16a34a;
+      --loss: #dc2626;
+      --font-display: 'DM Sans', system-ui, sans-serif;
+      --font-body: 'DM Sans', system-ui, sans-serif;
+      --font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', monospace;
+    }
+
+    /* ─── TOKENS (Dark) ─── */
+    [data-theme="dark"] {
+      --bg: #111111;
+      --surface: #1a1a1a;
+      --text: #f5f5f5;
+      --text-muted: #9ca3af;
+      --border: #2e2e2e;
+      --accent: #2DD4BF;
+      --accent-hover: #5eead4;
+      --accent-light: #042f2e;
+      --live-blue: #60A5FA;
+      --live-blue-light: #1e3a5f;
+      --gain: #34d399;
+      --loss: #f87171;
+    }
+
+    /* ─── BASE ─── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── LAYOUT ─── */
+    .guide { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+    .guide h1 { font-family: var(--font-display); font-weight: 700; font-size: 1.75rem; margin-bottom: 0.25rem; }
+    .guide > p.subtitle { color: var(--text-muted); font-size: 0.875rem; margin-bottom: 2.5rem; }
+
+    section { margin-bottom: 3rem; }
+    section h2 {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.25rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.5rem;
+      margin-bottom: 1.25rem;
+    }
+    section h3 {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.75rem;
+      margin-top: 1.5rem;
+    }
+    section h3:first-child { margin-top: 0; }
+    .note {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+      font-style: italic;
+    }
+
+    /* Theme toggle in header */
+    .guide-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 2.5rem; }
+    .guide-header div h1 { margin-bottom: 0.25rem; }
+    .guide-header div p { color: var(--text-muted); font-size: 0.875rem; }
+    .theme-toggle {
+      padding: 0.5rem;
+      border-radius: 0.375rem;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      font-family: var(--font-body);
+      font-size: 0.8125rem;
+    }
+    .theme-toggle:hover { background: var(--bg); }
+
+    /* ─── COLOR SWATCHES ─── */
+    .swatch-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 0.75rem;
+    }
+    .swatch {
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+      overflow: hidden;
+    }
+    .swatch-color {
+      height: 64px;
+      display: flex;
+      align-items: flex-end;
+      padding: 0.25rem 0.5rem;
+    }
+    .swatch-color span {
+      font-family: var(--font-mono);
+      font-size: 0.625rem;
+      color: white;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    }
+    .swatch-label {
+      padding: 0.5rem;
+      background: var(--surface);
+    }
+    .swatch-label .name {
+      font-weight: 600;
+      font-size: 0.8125rem;
+    }
+    .swatch-label .var {
+      font-family: var(--font-mono);
+      font-size: 0.6875rem;
+      color: var(--text-muted);
+    }
+
+    /* ─── TYPOGRAPHY SPECIMENS ─── */
+    .type-specimen { margin-bottom: 1rem; }
+    .type-specimen .label {
+      font-family: var(--font-mono);
+      font-size: 0.6875rem;
+      color: var(--text-muted);
+      margin-bottom: 0.25rem;
+    }
+    .type-specimen .sample { margin-bottom: 0; }
+
+    /* ─── COMPONENT DEMOS ─── */
+    .demo-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    .demo-box {
+      padding: 1rem;
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+      background: var(--surface);
+    }
+    .demo-box.full { width: 100%; }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.625rem 1.5rem;
+      border-radius: 0.375rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      font-family: var(--font-body);
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+      border: none;
+    }
+    .btn-primary { background: var(--accent); color: white; }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-secondary {
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover { background: var(--bg); }
+    .btn-disabled {
+      background: var(--border);
+      color: var(--text-muted);
+      cursor: not-allowed;
+    }
+
+    /* Inputs */
+    .input {
+      padding: 0.375rem 0.5rem;
+      font-size: 0.875rem;
+      font-family: var(--font-mono);
+      font-variant-numeric: tabular-nums;
+      text-align: right;
+      border: 1px solid var(--border);
+      border-radius: 0.25rem;
+      background: var(--surface);
+      color: var(--text);
+      outline: none;
+      width: 4rem;
+    }
+    .input:focus { border-color: var(--accent); }
+    .input-sm { font-size: 0.75rem; padding: 0.25rem 0.375rem; width: 3.5rem; }
+
+    /* Badges */
+    .badge {
+      display: inline-block;
+      font-size: 0.625rem;
+      font-weight: 700;
+      padding: 0.125rem 0.375rem;
+      border-radius: 0.25rem;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+    .badge-buy { background: rgba(22, 163, 74, 0.1); color: var(--gain); }
+    .badge-sell { background: rgba(220, 38, 38, 0.1); color: var(--loss); }
+    .badge-live { background: var(--live-blue-light); color: var(--live-blue); font-weight: 500; }
+
+    /* Cards */
+    .card {
+      padding: 0.75rem;
+      border-radius: 0.375rem;
+      border: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .card-label { font-size: 0.75rem; color: var(--text-muted); }
+    .card-value {
+      font-family: var(--font-mono);
+      font-variant-numeric: tabular-nums;
+      font-size: 1.125rem;
+      font-weight: 700;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 0.75rem;
+    }
+
+    /* Tables */
+    .table-demo { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+    .table-demo th {
+      text-align: left;
+      padding: 0.5rem 0.75rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .table-demo th.right { text-align: right; }
+    .table-demo td {
+      padding: 0.5rem 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .table-demo tr:last-child td { border-bottom: 0; }
+    .table-demo td.mono {
+      font-family: var(--font-mono);
+      font-variant-numeric: tabular-nums;
+    }
+    .table-demo td.right { text-align: right; }
+    .table-demo td.ticker { font-family: var(--font-mono); font-weight: 600; }
+
+    /* Step indicator */
+    .steps { display: flex; align-items: center; gap: 1rem; }
+    .step-circle {
+      width: 1.75rem;
+      height: 1.75rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-muted);
+    }
+    .step-circle.active { background: var(--accent); color: white; border-color: var(--accent); }
+    .step-circle.completed { background: var(--accent-light); color: var(--accent); border-color: var(--accent); }
+    .step-label { font-size: 0.875rem; color: var(--text-muted); }
+    .step-label.active { color: var(--accent); font-weight: 600; }
+    .step-connector { width: 2rem; height: 1px; background: var(--border); }
+    .step-connector.active { background: var(--accent); }
+    .step-item { display: flex; align-items: center; gap: 0.5rem; }
+
+    /* Dropzone */
+    .dropzone {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem;
+      border: 2px dashed var(--border);
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .dropzone:hover { border-color: var(--accent); background: rgba(13,148,136,0.03); }
+    .dropzone.active { border-color: var(--accent); background: var(--accent-light); }
+    .dropzone p { font-size: 0.875rem; font-weight: 600; margin-top: 0.75rem; }
+    .dropzone .subtext { font-size: 0.75rem; color: var(--text-muted); font-weight: 400; margin-top: 0.25rem; }
+    .dropzone svg { color: var(--text-muted); }
+
+    /* Alert */
+    .alert-error {
+      padding: 0.75rem;
+      border-radius: 0.375rem;
+      border: 1px solid rgba(220, 38, 38, 0.3);
+      background: rgba(220, 38, 38, 0.05);
+      font-size: 0.875rem;
+      color: var(--loss);
+    }
+    .alert-insight {
+      padding: 1rem;
+      border-radius: 0.375rem;
+      border: 1px solid rgba(13, 148, 136, 0.2);
+      background: rgba(204, 251, 241, 0.3);
+      font-size: 0.875rem;
+    }
+    [data-theme="dark"] .alert-insight { background: rgba(4, 47, 46, 0.3); }
+    .alert-insight h4 {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 0.875rem;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+
+    /* Sector row */
+    .sector-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.625rem 0.75rem;
+      border-radius: 0.375rem;
+      border: 1px solid transparent;
+      transition: background 0.15s, border-color 0.15s;
+      cursor: pointer;
+    }
+    .sector-row:hover { background: var(--surface); border-color: var(--border); }
+    .sector-row .chevron { color: var(--text-muted); flex-shrink: 0; transition: transform 0.15s; }
+    .sector-row .sector-name { font-family: var(--font-display); font-weight: 600; font-size: 0.875rem; flex: 1; }
+    .sector-row .sector-meta { font-size: 0.75rem; color: var(--text-muted); }
+
+    /* Flash animation */
+    @keyframes flash-teal {
+      0% { background-color: var(--accent-light); }
+      100% { background-color: transparent; }
+    }
+    .flash-demo { animation: flash-teal 1.5s ease-out infinite; padding: 0.75rem 1rem; border-radius: 0.375rem; font-size: 0.875rem; }
+
+    /* Spinner */
+    .spinner {
+      width: 0.75rem;
+      height: 0.75rem;
+      border: 2px solid var(--live-blue);
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      display: inline-block;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-row { display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; color: var(--live-blue); }
+
+    /* Mode toggle */
+    .mode-toggle { display: flex; gap: 0.5rem; }
+    .mode-btn {
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      font-family: var(--font-body);
+      cursor: pointer;
+      transition: background 0.15s;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text);
+    }
+    .mode-btn:hover { background: var(--bg); }
+    .mode-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+
+    /* Spacing reference */
+    .spacing-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem; }
+    .spacing-bar { background: var(--accent-light); border: 1px solid var(--accent); border-radius: 2px; height: 1rem; }
+    .spacing-label { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); min-width: 4rem; }
+
+    /* Border radius reference */
+    .radius-grid { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .radius-box {
+      width: 4rem;
+      height: 4rem;
+      background: var(--accent-light);
+      border: 1px solid var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 0.625rem;
+      color: var(--accent);
+    }
+
+    /* Icon reference */
+    .icon-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 1rem;
+    }
+    .icon-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.375rem;
+      padding: 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 0.375rem;
+    }
+    .icon-item svg { color: var(--text-muted); }
+    .icon-item span { font-size: 0.6875rem; color: var(--text-muted); }
+
+    /* Code block */
+    code {
+      font-family: var(--font-mono);
+      font-size: 0.8125rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 0.125rem 0.375rem;
+      border-radius: 0.25rem;
+    }
+    pre {
+      font-family: var(--font-mono);
+      font-size: 0.8125rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 0.375rem;
+      padding: 1rem;
+      overflow-x: auto;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <div class="guide">
+
+    <!-- Header -->
+    <div class="guide-header">
+      <div>
+        <h1>Rebalancer Style Guide</h1>
+        <p>Complete design system reference extracted from the application.</p>
+      </div>
+      <button class="theme-toggle" onclick="toggleTheme()">Toggle Dark Mode</button>
+    </div>
+
+    <!-- ═══════════ 1. COLOR TOKENS ═══════════ -->
+    <section>
+      <h2>Color Tokens</h2>
+
+      <h3>Backgrounds & Surfaces</h3>
+      <div class="swatch-grid">
+        <div class="swatch">
+          <div class="swatch-color" style="background: var(--bg)"><span></span></div>
+          <div class="swatch-label">
+            <div class="name">Background</div>
+            <div class="var">--bg</div>
+            <div class="var">Light: #FAFAF7 / Dark: #111111</div>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background: var(--surface)"><span></span></div>
+          <div class="swatch-label">
+            <div class="name">Surface</div>
+            <div class="var">--surface</div>
+            <div class="var">Light: #FFFFFF / Dark: #1a1a1a</div>
+          </div>
+        </div>
+      </div>
+
+      <h3>Text</h3>
+      <div class="swatch-grid">
+        <div class="swatch">
+          <div class="swatch-color" style="background: var(--text)"><span></span></div>
+          <div class="swatch-label">
+            <div class="name">Primary Text</div>
+            <div class="var">--text</div>
+            <div class="var">Light: #1a1a1a / Dark: #f5f5f5</div>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background: var(--text-muted)"><span></span></div>
+          <div class="swatch-label">
+            <div class="name">Muted Text</div>
+            <div class="var">--text-muted</div>
+            <div class="var">Light: #6b7280 / Dark: #9ca3af</div>
+          </div>
+        </div>
+      </div>
+
+      <h3>Border</h3>
+      <div class="swatch-grid">
+        <div class="swatch">
+          <div class="swatch-color" style="background: var(--border)"><span></span></div>
+          <div class="swatch-label">
+            <div class="name">Border</div>
+            <div class="var">--border</div>
+            <div class="var">Light: #e5e5e5 / Dark: #2e2e2e</div>
+          </div>
+        </div>
+      </div>
+
+      <h3>Accent (Teal)</h3>
+      <div class="swatch-grid">
+        <div class="swatch">
+          <div class="swatch-color" style="background: var(--accent)"><span></span></div>
+          <div class="swatch-label">
+            <div class="name">Accent</div>
+            <div class="var">--accent</div>
+            <div class="var">Light: #0D9488 / Dark: #2DD4BF</div>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background: var(--accent-hover)"><span></span></div>
+          <div class="swatch-label">
+            <div class="name">Accent Hover</div>
+            <div class="var">--accent-hover</div>
+            <div class="var">Light: #0f766e / Dark: #5eead4</div>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background: var(--accent-light)"><span></span></div>
+          <div class="swatch-label">
+            <div class="name">Accent Light</div>
+            <div class="var">--accent-light</div>
+            <div class="var">Light: #ccfbf1 / Dark: #042f2e</div>
+          </div>
+        </div>
+      </div>
+
+      <h3>Semantic</h3>
+      <div class="swatch-grid">
+        <div class="swatch">
+          <div class="swatch-color" style="background: var(--live-blue)"><span></span></div>
+          <div class="swatch-label">
+            <div class="name">Live Blue</div>
+            <div class="var">--live-blue</div>
+            <div class="var">Light: #2563EB / Dark: #60A5FA</div>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background: var(--live-blue-light)"><span></span></div>
+          <div class="swatch-label">
+            <div class="name">Live Blue Light</div>
+            <div class="var">--live-blue-light</div>
+            <div class="var">Light: #dbeafe / Dark: #1e3a5f</div>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background: var(--gain)"><span></span></div>
+          <div class="swatch-label">
+            <div class="name">Gain (Green)</div>
+            <div class="var">--gain</div>
+            <div class="var">Light: #16a34a / Dark: #34d399</div>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-color" style="background: var(--loss)"><span></span></div>
+          <div class="swatch-label">
+            <div class="name">Loss (Red)</div>
+            <div class="var">--loss</div>
+            <div class="var">Light: #dc2626 / Dark: #f87171</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════ 2. TYPOGRAPHY ═══════════ -->
+    <section>
+      <h2>Typography</h2>
+
+      <h3>Font Stacks</h3>
+      <pre>--font-display: 'DM Sans', system-ui, sans-serif     /* Headings, sector names, labels */
+--font-body:    'DM Sans', system-ui, sans-serif     /* Body text, UI labels */
+--font-mono:    ui-monospace, 'SF Mono', monospace    /* Financial data, tickers, prices */</pre>
+
+      <h3>Scale</h3>
+
+      <div class="type-specimen">
+        <div class="label">Page Title &mdash; font-display, bold, 2xl (1.5rem/24px)</div>
+        <div class="sample" style="font-family: var(--font-display); font-weight: 700; font-size: 1.5rem;">Portfolio & Targets</div>
+      </div>
+
+      <div class="type-specimen">
+        <div class="label">App Name / Hero &mdash; font-display, bold, lg (1.125rem/18px)</div>
+        <div class="sample" style="font-family: var(--font-display); font-weight: 700; font-size: 1.125rem;">Rebalancer</div>
+      </div>
+
+      <div class="type-specimen">
+        <div class="label">Section Header &mdash; font-display, semibold, sm (0.875rem/14px), uppercase</div>
+        <div class="sample" style="font-family: var(--font-display); font-weight: 600; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted);">Sectors & Targets</div>
+      </div>
+
+      <div class="type-specimen">
+        <div class="label">Sector Name &mdash; font-display, semibold, sm (0.875rem/14px)</div>
+        <div class="sample" style="font-family: var(--font-display); font-weight: 600; font-size: 0.875rem;">Technology</div>
+      </div>
+
+      <div class="type-specimen">
+        <div class="label">Body Text &mdash; font-body, regular, sm (0.875rem/14px)</div>
+        <div class="sample" style="font-size: 0.875rem;">Upload. Target. Trade.</div>
+      </div>
+
+      <div class="type-specimen">
+        <div class="label">Muted Helper &mdash; font-body, regular, xs (0.75rem/12px)</div>
+        <div class="sample" style="font-size: 0.75rem; color: var(--text-muted);">Targets must sum to 100% (currently 98.0%)</div>
+      </div>
+
+      <div class="type-specimen">
+        <div class="label">Financial Value &mdash; font-mono, bold, lg (1.125rem/18px), tabular-nums</div>
+        <div class="sample" style="font-family: var(--font-mono); font-weight: 700; font-size: 1.125rem; font-variant-numeric: tabular-nums;">$1,234,567</div>
+      </div>
+
+      <div class="type-specimen">
+        <div class="label">Ticker Symbol &mdash; font-mono, semibold, sm (0.875rem/14px)</div>
+        <div class="sample" style="font-family: var(--font-mono); font-weight: 600; font-size: 0.875rem;">AAPL</div>
+      </div>
+
+      <div class="type-specimen">
+        <div class="label">Table Data &mdash; font-mono, regular, sm (0.875rem/14px), tabular-nums</div>
+        <div class="sample" style="font-family: var(--font-mono); font-size: 0.875rem; font-variant-numeric: tabular-nums;">$182.52 &nbsp; 150 shares &nbsp; 12.4%</div>
+      </div>
+
+      <div class="type-specimen">
+        <div class="label">Small Mono &mdash; font-mono, regular, xs (0.75rem/12px)</div>
+        <div class="sample" style="font-family: var(--font-mono); font-size: 0.75rem;">FGSI.X &nbsp; 448.766 shares @ $23.45</div>
+      </div>
+    </section>
+
+    <!-- ═══════════ 3. SPACING & RADII ═══════════ -->
+    <section>
+      <h2>Spacing & Border Radius</h2>
+
+      <h3>Spacing Scale (Tailwind)</h3>
+      <div class="spacing-row"><div class="spacing-label">1 (0.25rem)</div><div class="spacing-bar" style="width: 0.25rem;"></div></div>
+      <div class="spacing-row"><div class="spacing-label">1.5 (0.375rem)</div><div class="spacing-bar" style="width: 0.375rem;"></div></div>
+      <div class="spacing-row"><div class="spacing-label">2 (0.5rem)</div><div class="spacing-bar" style="width: 0.5rem;"></div></div>
+      <div class="spacing-row"><div class="spacing-label">3 (0.75rem)</div><div class="spacing-bar" style="width: 0.75rem;"></div></div>
+      <div class="spacing-row"><div class="spacing-label">4 (1rem)</div><div class="spacing-bar" style="width: 1rem;"></div></div>
+      <div class="spacing-row"><div class="spacing-label">6 (1.5rem)</div><div class="spacing-bar" style="width: 1.5rem;"></div></div>
+      <div class="spacing-row"><div class="spacing-label">8 (2rem)</div><div class="spacing-bar" style="width: 2rem;"></div></div>
+      <div class="spacing-row"><div class="spacing-label">12 (3rem)</div><div class="spacing-bar" style="width: 3rem;"></div></div>
+
+      <h3>Border Radius</h3>
+      <div class="radius-grid">
+        <div class="radius-box" style="border-radius: 0.25rem;">rounded<br>(4px)</div>
+        <div class="radius-box" style="border-radius: 0.375rem;">rounded-md<br>(6px)</div>
+        <div class="radius-box" style="border-radius: 0.5rem;">rounded-lg<br>(8px)</div>
+        <div class="radius-box" style="border-radius: 9999px; width: 4rem; height: 4rem;">full<br>(pill)</div>
+      </div>
+      <p class="note">
+        <code>rounded</code> for small inputs. <code>rounded-md</code> for buttons, cards, alerts. <code>rounded-lg</code> for dropzone. <code>rounded-full</code> for step circles.
+      </p>
+    </section>
+
+    <!-- ═══════════ 4. BUTTONS ═══════════ -->
+    <section>
+      <h2>Buttons</h2>
+
+      <h3>Primary</h3>
+      <div class="demo-row">
+        <button class="btn btn-primary">Next</button>
+        <button class="btn btn-primary" style="padding: 0.625rem 1.5rem;">Confirm &rarr; Trade List</button>
+      </div>
+      <p class="note">Accent bg, white text, semibold. Used for primary wizard navigation and confirmations.</p>
+
+      <h3>Secondary / Outline</h3>
+      <div class="demo-row">
+        <button class="btn btn-secondary">Back</button>
+        <button class="btn btn-secondary">Save Targets</button>
+        <button class="btn btn-secondary" style="width: 12rem; gap: 0.5rem;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Copy Trade List
+        </button>
+      </div>
+      <p class="note">Surface bg, border, text color. Used for secondary actions and back navigation.</p>
+
+      <h3>Disabled</h3>
+      <div class="demo-row">
+        <button class="btn btn-disabled">Next</button>
+      </div>
+      <p class="note">Border bg, muted text, <code>cursor: not-allowed</code>. Shown when targets don't sum to 100%.</p>
+
+      <h3>Text/Link Buttons</h3>
+      <div class="demo-row">
+        <button style="font-size: 0.75rem; color: var(--accent); background: none; border: none; cursor: pointer; font-family: var(--font-body);">Edit weights</button>
+        <button style="font-size: 0.75rem; color: var(--accent); background: none; border: none; cursor: pointer; font-family: var(--font-body);">Reset to equal weight</button>
+      </div>
+      <p class="note">Accent colored, no border/bg. Used inline for toggling sector weight editing.</p>
+    </section>
+
+    <!-- ═══════════ 5. FORM INPUTS ═══════════ -->
+    <section>
+      <h2>Form Inputs</h2>
+
+      <h3>Target Allocation Input</h3>
+      <div class="demo-row">
+        <input class="input" type="number" value="25" /><span style="font-size: 0.875rem; color: var(--text-muted);">%</span>
+      </div>
+      <p class="note">
+        <code>w-16</code>, mono tabular-nums, right-aligned, border focus ring to accent. No spinner (custom CSS hides browser spinners).
+      </p>
+
+      <h3>Ticker Weight Input (Small)</h3>
+      <div class="demo-row">
+        <span style="font-family: var(--font-mono); font-size: 0.75rem; width: 4rem;">AAPL</span>
+        <input class="input input-sm" type="number" value="33.3" /><span style="font-size: 0.75rem; color: var(--text-muted);">%</span>
+      </div>
+
+      <h3>Shares Input (Trade Edit)</h3>
+      <div class="demo-row">
+        <span class="badge badge-buy">BUY</span>
+        <input class="input input-sm" type="number" value="42" />
+      </div>
+
+      <h3>Cash Amount Input</h3>
+      <div class="demo-row">
+        <span style="font-size: 0.875rem; color: var(--text-muted);">$</span>
+        <input class="input" type="number" value="10000" style="width: 8rem;" placeholder="10,000" />
+      </div>
+
+      <h3>Mode Toggle</h3>
+      <div class="demo-row">
+        <div class="mode-toggle">
+          <button class="mode-btn active">Buy &amp; Sell</button>
+          <button class="mode-btn">Add Cash Only</button>
+        </div>
+      </div>
+      <p class="note">Active mode gets accent bg + white text. Inactive gets border outline.</p>
+    </section>
+
+    <!-- ═══════════ 6. BADGES ═══════════ -->
+    <section>
+      <h2>Badges</h2>
+      <div class="demo-row">
+        <span class="badge badge-buy">BUY</span>
+        <span class="badge badge-sell">SELL</span>
+        <span class="badge badge-live">Live</span>
+      </div>
+      <p class="note">
+        BUY: <code>bg-gain/10 text-gain</code>. SELL: <code>bg-loss/10 text-loss</code>. Live: <code>bg-live-blue-light text-live-blue</code>.
+        All 10px font-bold, uppercase, 1.5px horizontal padding.
+      </p>
+    </section>
+
+    <!-- ═══════════ 7. CARDS ═══════════ -->
+    <section>
+      <h2>Summary Cards</h2>
+      <div class="card-grid">
+        <div class="card">
+          <p class="card-label">Portfolio Value</p>
+          <p class="card-value" style="color: var(--text);">$1,234,567</p>
+        </div>
+        <div class="card">
+          <p class="card-label">Cash</p>
+          <p class="card-value" style="color: var(--text);">$45,230</p>
+        </div>
+        <div class="card">
+          <p class="card-label">Total Sells</p>
+          <p class="card-value" style="color: var(--loss);">$128,450.00</p>
+        </div>
+        <div class="card">
+          <p class="card-label">Total Buys</p>
+          <p class="card-value" style="color: var(--gain);">$126,200.00</p>
+        </div>
+        <div class="card">
+          <p class="card-label">Undeployed Cash</p>
+          <p class="card-value" style="color: var(--text);">$2,250.00</p>
+        </div>
+      </div>
+      <p class="note">
+        <code>p-3</code> or <code>p-4</code>, <code>rounded-md</code>, <code>border border-border</code>, <code>bg-surface</code>. Label is <code>text-xs text-text-muted</code>. Value is <code>font-mono tabular-nums text-lg font-bold</code>.
+      </p>
+    </section>
+
+    <!-- ═══════════ 8. STEP INDICATOR ═══════════ -->
+    <section>
+      <h2>Step Indicator (Wizard Progress)</h2>
+      <div class="demo-box full">
+        <div class="steps">
+          <div class="step-item">
+            <div class="step-circle completed">&#10003;</div>
+            <span class="step-label" style="color: var(--accent); cursor: pointer;">Portfolio &amp; Targets</span>
+          </div>
+          <div class="step-connector active"></div>
+          <div class="step-item">
+            <div class="step-circle active">2</div>
+            <span class="step-label active">Recommendations</span>
+          </div>
+          <div class="step-connector"></div>
+          <div class="step-item">
+            <div class="step-circle">3</div>
+            <span class="step-label">Trade List</span>
+          </div>
+        </div>
+      </div>
+      <p class="note">
+        Three states: completed (accent-light bg, checkmark), active (accent bg, white text, semibold label), upcoming (surface bg, muted text). Connector line uses <code>bg-accent</code> for completed segments, <code>bg-border</code> otherwise.
+      </p>
+    </section>
+
+    <!-- ═══════════ 9. DROPZONE ═══════════ -->
+    <section>
+      <h2>File Upload Dropzone</h2>
+      <div class="dropzone">
+        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        <p>Drop your Portfolio Appraisal XLSX here</p>
+        <span class="subtext">or click to browse (max 5MB)</span>
+      </div>
+      <p class="note">
+        <code>border-2 border-dashed border-border rounded-lg</code>. On hover/drag: <code>border-accent bg-accent-light</code>. Padding <code>p-8 sm:p-12</code>.
+      </p>
+    </section>
+
+    <!-- ═══════════ 10. SECTOR TREE ROW ═══════════ -->
+    <section>
+      <h2>Sector Tree Row</h2>
+      <div style="max-width: 600px;">
+        <div class="sector-row" style="background: var(--surface); border-color: var(--border);">
+          <svg class="chevron" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="transform: rotate(90deg);"><polyline points="9 18 15 12 9 6"/></svg>
+          <span class="sector-name">Technology</span>
+          <span class="sector-meta">(8)</span>
+          <span style="font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 0.875rem; margin-left: auto; width: 6rem; text-align: right;">$234,500</span>
+          <span style="font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 0.875rem; color: var(--text-muted); width: 3.5rem; text-align: right;">18.5%</span>
+          <div style="display: flex; align-items: center; gap: 0.25rem;">
+            <input class="input input-sm" type="number" value="20" style="width: 4rem;" />
+            <span style="font-size: 0.75rem; color: var(--text-muted);">%</span>
+          </div>
+        </div>
+        <div class="sector-row">
+          <svg class="chevron" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+          <span class="sector-name">Healthcare</span>
+          <span class="sector-meta">(4)</span>
+          <span style="font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 0.875rem; margin-left: auto; width: 6rem; text-align: right;">$156,200</span>
+          <span style="font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 0.875rem; color: var(--text-muted); width: 3.5rem; text-align: right;">12.3%</span>
+          <div style="display: flex; align-items: center; gap: 0.25rem;">
+            <input class="input input-sm" type="number" value="12" style="width: 4rem;" />
+            <span style="font-size: 0.75rem; color: var(--text-muted);">%</span>
+          </div>
+        </div>
+      </div>
+      <p class="note">
+        Collapsible via chevron rotation. Hover state: <code>bg-surface border-border</code>. Contains sector name (font-display semibold), count badge, dollar value, current %, and target input. Expanded state shows holdings table.
+      </p>
+    </section>
+
+    <!-- ═══════════ 11. TABLES ═══════════ -->
+    <section>
+      <h2>Data Tables</h2>
+
+      <h3>Holdings Table (Inside Sector Tree)</h3>
+      <div class="demo-box full" style="overflow-x: auto;">
+        <table class="table-demo">
+          <thead>
+            <tr>
+              <th>Ticker</th>
+              <th class="right">Shares</th>
+              <th class="right">Price</th>
+              <th class="right">Value</th>
+              <th class="right">Gain/Loss</th>
+              <th class="right">Weight</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="ticker" style="font-family: var(--font-mono); font-weight: 600;">AAPL</span> <span style="color: var(--text-muted); font-size: 0.75rem; margin-left: 0.5rem;">Apple Inc</span></td>
+              <td class="mono right">150</td>
+              <td class="mono right" style="color: var(--live-blue);">$182.52</td>
+              <td class="mono right">$27,378</td>
+              <td class="mono right" style="color: var(--gain);">&#9650; $4,230</td>
+              <td class="right"><input class="input input-sm" type="number" value="33.3" style="width: 3.5rem;" /><span style="font-size: 0.75rem; color: var(--text-muted); margin-left: 0.25rem;">%</span></td>
+            </tr>
+            <tr>
+              <td><span style="font-family: var(--font-mono); font-weight: 600;">MSFT</span> <span style="color: var(--text-muted); font-size: 0.75rem; margin-left: 0.5rem;">Microsoft Corp</span></td>
+              <td class="mono right">85</td>
+              <td class="mono right" style="color: var(--live-blue);">$378.91</td>
+              <td class="mono right">$32,207</td>
+              <td class="mono right" style="color: var(--loss);">&#9660; $1,200</td>
+              <td class="right"><input class="input input-sm" type="number" value="33.3" style="width: 3.5rem;" /><span style="font-size: 0.75rem; color: var(--text-muted); margin-left: 0.25rem;">%</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">
+        Live prices shown in <code>text-live-blue</code>. Gain uses <code>text-gain</code> + &#9650;. Loss uses <code>text-loss</code> + &#9660;. All numeric columns: <code>font-mono tabular-nums text-right</code>.
+      </p>
+
+      <h3>Trade List Table (Final Screen)</h3>
+      <div class="demo-box full" style="overflow-x: auto;">
+        <table class="table-demo">
+          <thead>
+            <tr>
+              <th>Ticker</th>
+              <th>Name</th>
+              <th class="right">Shares</th>
+              <th class="right">Price</th>
+              <th class="right">Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="font-family: var(--font-mono); font-weight: 600;">NVDA</td>
+              <td style="color: var(--text-muted);">NVIDIA Corporation</td>
+              <td class="mono right">12</td>
+              <td class="mono right">$875.30</td>
+              <td class="mono right" style="font-weight: 600; color: var(--loss);">$10,503.60</td>
+            </tr>
+            <tr>
+              <td style="font-family: var(--font-mono); font-weight: 600;">JPM</td>
+              <td style="color: var(--text-muted);">JPMorgan Chase &amp; Co</td>
+              <td class="mono right">25</td>
+              <td class="mono right">$196.45</td>
+              <td class="mono right" style="font-weight: 600; color: var(--gain);">$4,911.25</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">
+        Sells table uses <code>text-loss</code> for amounts, section header colored loss. Buys table uses <code>text-gain</code> for amounts, section header colored gain. Border with <code>rounded-md overflow-hidden</code>.
+      </p>
+    </section>
+
+    <!-- ═══════════ 12. ALERTS & FEEDBACK ═══════════ -->
+    <section>
+      <h2>Alerts & Feedback</h2>
+
+      <h3>Error Alert</h3>
+      <div class="alert-error">Please upload an XLSX file (Portfolio Appraisal format).</div>
+
+      <h3>Insight Panel</h3>
+      <div class="alert-insight" style="margin-top: 0.75rem;">
+        <h4>Insights</h4>
+        <ul style="list-style: none; font-size: 0.875rem;">
+          <li style="margin-bottom: 0.25rem;">Technology sector is 3.2% overweight &mdash; selling to rebalance</li>
+          <li>Healthcare sector is 2.1% underweight &mdash; buying to rebalance</li>
+        </ul>
+      </div>
+
+      <h3>Validation Message</h3>
+      <p style="font-size: 0.75rem; color: var(--loss); margin-top: 0.75rem;">Targets must sum to 100% (currently 97.5%)</p>
+
+      <h3>Price Fetch Errors</h3>
+      <div class="card" style="margin-top: 0.75rem; font-size: 0.875rem;">
+        <p style="color: var(--text-muted); margin-bottom: 0.25rem;">
+          Could not fetch prices for: <span style="font-family: var(--font-mono); color: var(--loss);">FGSI.X, BRK.B</span>
+        </p>
+        <p style="font-size: 0.75rem; color: var(--text-muted);">Using report prices as fallback.</p>
+      </div>
+
+      <h3>Loading Spinner</h3>
+      <div class="loading-row" style="margin-top: 0.75rem;">
+        <div class="spinner"></div>
+        Fetching live prices...
+      </div>
+
+      <h3>Flash Animation (Recalculation)</h3>
+      <div class="flash-demo" style="margin-top: 0.75rem;">This row flashes teal when values recalculate</div>
+      <p class="note">
+        <code>@keyframes flash-teal</code>: 0% <code>bg-accent-light</code> &rarr; 100% transparent, 150ms ease-out. Applied as <code>.flash-recalc</code>.
+      </p>
+    </section>
+
+    <!-- ═══════════ 13. ICONS ═══════════ -->
+    <section>
+      <h2>Icons</h2>
+      <p style="font-size: 0.875rem; color: var(--text-muted); margin-bottom: 1rem;">All icons are inline SVG (Lucide-style). Stroke-based, <code>stroke-width="2"</code>, <code>fill="none"</code>. Sized at 14-18px for UI, 40px for hero/dropzone.</p>
+      <div class="icon-grid">
+        <div class="icon-item">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <span>Moon (dark)</span>
+        </div>
+        <div class="icon-item">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          <span>Sun (light)</span>
+        </div>
+        <div class="icon-item">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <span>Upload</span>
+        </div>
+        <div class="icon-item">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+          <span>Chevron</span>
+        </div>
+        <div class="icon-item">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>Check</span>
+        </div>
+        <div class="icon-item">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          <span>Close / Remove</span>
+        </div>
+        <div class="icon-item">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          <span>Copy</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════ 14. LAYOUT PATTERNS ═══════════ -->
+    <section>
+      <h2>Layout Patterns</h2>
+
+      <h3>Page Container</h3>
+      <pre>max-w-2xl mx-auto px-4 py-12 sm:py-20   /* Landing (no portfolio) */
+max-w-4xl mx-auto px-4 py-6              /* Main wizard screens */</pre>
+
+      <h3>Content Spacing</h3>
+      <pre>space-y-6                                 /* Between major sections */
+space-y-3                                 /* Between form fields */
+space-y-1                                 /* Between tree items / rows */
+gap-3                                     /* Grid card gaps */
+gap-2                                     /* Inline element gaps */</pre>
+
+      <h3>Wizard Footer</h3>
+      <pre>flex items-center justify-between pt-4 border-t border-border
+/* Back button on left, primary action on right */</pre>
+
+      <h3>Header Bar</h3>
+      <pre>flex items-center justify-between px-6 py-4 border-b border-border
+/* App name left, theme toggle right */</pre>
+
+      <h3>Responsive</h3>
+      <pre>/* Desktop: grid tables with fixed column widths */
+hidden sm:grid grid-cols-[minmax(180px,1fr)_70px_90px_95px_130px_80px]
+
+/* Mobile: card layout */
+sm:hidden p-3 rounded-md border border-border bg-surface
+
+/* Labels hidden on mobile */
+hidden sm:inline
+hidden sm:table-cell</pre>
+    </section>
+
+    <!-- ═══════════ 15. DARK MODE ═══════════ -->
+    <section>
+      <h2>Dark Mode</h2>
+      <p style="font-size: 0.875rem; margin-bottom: 1rem;">
+        Toggled via <code>data-theme="dark"</code> on the <code>&lt;html&gt;</code> element. Persisted to <code>localStorage('theme')</code>. Falls back to <code>prefers-color-scheme</code> on first visit. All colors swap via CSS custom properties &mdash; no additional classes needed.
+      </p>
+      <pre>/* Implementation */
+document.documentElement.setAttribute('data-theme', theme);
+localStorage.setItem('theme', theme);</pre>
+    </section>
+
+    <!-- ═══════════ 16. FINANCIAL DATA CONVENTIONS ═══════════ -->
+    <section>
+      <h2>Financial Data Conventions</h2>
+      <ul style="font-size: 0.875rem; list-style: disc; padding-left: 1.5rem; line-height: 2;">
+        <li>All monetary values use <code>font-mono tabular-nums</code> for alignment</li>
+        <li>Currency formatted with <code>toLocaleString('en-US', { style: 'currency', currency: 'USD' })</code></li>
+        <li>Summary cards show whole dollars (<code>minimumFractionDigits: 0</code>)</li>
+        <li>Trade list shows cents (<code>minimumFractionDigits: 2</code>)</li>
+        <li>Percentages show one decimal: <code>12.4%</code></li>
+        <li>Shares: whole numbers by default, fractional to 3 decimals for mutual funds</li>
+        <li>Gains colored <code>var(--gain)</code> with &#9650; prefix</li>
+        <li>Losses colored <code>var(--loss)</code> with &#9660; prefix</li>
+        <li>Live prices colored <code>var(--live-blue)</code></li>
+        <li>Ticker symbols always uppercase, <code>font-mono font-semibold</code></li>
+      </ul>
+    </section>
+
+  </div>
+
+  <script>
+    function toggleTheme() {
+      const html = document.documentElement;
+      const current = html.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', next);
+    }
+  </script>
+</body>
+</html>
