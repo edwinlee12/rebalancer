@@ -343,6 +343,54 @@ describe('rebalance', () => {
     });
   });
 
+  describe('live price appreciation', () => {
+    test('rebalances against live prices, not stale report total', () => {
+      // Portfolio recorded at report prices ($50k total). Live prices 25% higher.
+      // If rebalance used the stale $50k total for sector targets but live prices
+      // for currentValue, every sector would look overweight and sells would
+      // dominate buys. With the fix, targets scale to the $62.5k live total.
+      const livePrices: Record<string, number> = {
+        AAPL: 150 * 1.25,
+        MSFT: 300 * 1.25,
+        JNJ: 100 * 1.25,
+        BND: 100 * 1.25,
+      };
+      const targets: SectorTarget[] = [
+        { sectorName: 'Tech', targetPct: 60 },
+        { sectorName: 'Healthcare', targetPct: 20 },
+        { sectorName: 'Bonds', targetPct: 20 },
+      ];
+      const result = rebalance(makePortfolio(), targets, 'buy-sell', livePrices);
+      const sells = result.trades
+        .filter((t) => t.action === 'sell')
+        .reduce((s, t) => s + t.amount, 0);
+      const buys = result.trades
+        .filter((t) => t.action === 'buy')
+        .reduce((s, t) => s + t.amount, 0);
+      // At target allocations with no cash, sells and buys should both be ~$0.
+      expect(Math.abs(sells - buys)).toBeLessThan(500);
+      expect(result.undeployedCash).toBeLessThan(500);
+    });
+  });
+
+  describe('buy-sell undeployed cash', () => {
+    test('drives undeployed cash near zero with portfolio cash', () => {
+      // $25k cash sitting in a $50k portfolio at current targets — buy-sell
+      // mode should deploy nearly all of it (cheapest share is $100).
+      const portfolioWithCash = makePortfolio({
+        cashValue: 25000,
+        totalValue: 75000,
+      });
+      const targets: SectorTarget[] = [
+        { sectorName: 'Tech', targetPct: 60 },
+        { sectorName: 'Healthcare', targetPct: 20 },
+        { sectorName: 'Bonds', targetPct: 20 },
+      ];
+      const result = rebalance(portfolioWithCash, targets, 'buy-sell', prices);
+      expect(result.undeployedCash).toBeLessThan(150);
+    });
+  });
+
   describe('buy-budget capping', () => {
     test('total buys do not exceed sell proceeds plus cash', () => {
       const targets: SectorTarget[] = [
@@ -433,6 +481,20 @@ describe('rebalance', () => {
       // $50 can't buy a whole share of anything (cheapest is BND/JNJ at $100)
       // So all cash should be undeployed
       expect(result.undeployedCash).toBeGreaterThan(0);
+    });
+
+    test('drives undeployed cash near zero across multiple underweight tickers', () => {
+      // $1000 cash on a $50k portfolio at current allocations creates small
+      // shortfalls in every sector. Single-ticker top-up would leave most cash
+      // undeployed; greedy multi-ticker top-up should consume nearly all of it.
+      const targets: SectorTarget[] = [
+        { sectorName: 'Tech', targetPct: 60 },
+        { sectorName: 'Healthcare', targetPct: 20 },
+        { sectorName: 'Bonds', targetPct: 20 },
+      ];
+      const result = rebalance(makePortfolio(), targets, 'add-cash', prices, 1000);
+      // Cheapest underweight ticker is $100 (BND/JNJ). Undeployed must be < $100.
+      expect(result.undeployedCash).toBeLessThan(100);
     });
 
     test('allocates rounding remainder to largest-shortfall ticker', () => {

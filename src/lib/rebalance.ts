@@ -69,6 +69,68 @@ function buildTickerStates(
   return states;
 }
 
+function topUpBudget(
+  budget: number,
+  buyStates: TickerState[],
+  trades: Trade[],
+  totalValue: number
+): number {
+  // Greedy 1-share-at-a-time top-up: pick the largest-drift underweight ticker
+  // we can still afford, buy one share, repeat until budget < cheapest price.
+  // Allows up to one extra share past per-ticker target to consume rounding remainder.
+  if (buyStates.length === 0) return budget;
+  const sorted = [...buyStates].sort((a, b) => Math.abs(b.diff) - Math.abs(a.diff));
+  const overshoot = new Map<string, number>();
+
+  while (true) {
+    let picked: TickerState | null = null;
+    for (const state of sorted) {
+      if (budget < state.price) continue;
+      const idealShares = Math.floor(state.diff / state.price);
+      const existing = trades.find(
+        (t) => t.ticker === state.ticker && t.action === 'buy'
+      );
+      const currentShares = existing?.shares ?? 0;
+      const over = (overshoot.get(state.ticker) ?? 0);
+      // Cap each ticker at +1 share past idealShares to avoid runaway overshoot.
+      if (currentShares >= idealShares + 1 || over >= 1) continue;
+      picked = state;
+      break;
+    }
+    if (!picked) break;
+
+    const existing = trades.find(
+      (t) => t.ticker === picked!.ticker && t.action === 'buy'
+    );
+    if (existing) {
+      existing.shares += 1;
+      existing.amount = existing.shares * existing.price;
+    } else {
+      const diffPct = (picked.diff / totalValue) * 100;
+      const targetPct = (picked.targetValue / totalValue) * 100;
+      trades.push({
+        ticker: picked.ticker,
+        name: picked.name,
+        action: 'buy',
+        shares: 1,
+        price: picked.price,
+        amount: picked.price,
+        reason: generateReason(diffPct, targetPct, 'buy'),
+        sectorName: picked.sectorName,
+      });
+    }
+    budget -= picked.price;
+    const idealShares = Math.floor(picked.diff / picked.price);
+    const updated = trades.find(
+      (t) => t.ticker === picked!.ticker && t.action === 'buy'
+    )!;
+    if (updated.shares > idealShares) {
+      overshoot.set(picked.ticker, updated.shares - idealShares);
+    }
+  }
+  return budget;
+}
+
 function generateReason(
   diffPct: number,
   targetPct: number,
@@ -141,10 +203,19 @@ export function rebalance(
   prices: Record<string, number>,
   cashAmount?: number
 ): RebalanceResult {
+  // Recompute total from LIVE prices so sector targets and per-ticker currentValue
+  // are on the same scale. Using portfolio.totalValue (built from report prices)
+  // here would make appreciated holdings look overweight and collapse the buy side.
+  let liveHoldingsTotal = 0;
+  for (const sector of portfolio.sectors) {
+    for (const h of sector.holdings) {
+      const price = prices[h.ticker] ?? h.price;
+      liveHoldingsTotal += h.shares * price;
+    }
+  }
+  const liveTotal = liveHoldingsTotal + portfolio.cashValue;
   const totalValue =
-    mode === 'add-cash' && cashAmount
-      ? portfolio.totalValue + cashAmount
-      : portfolio.totalValue;
+    mode === 'add-cash' && cashAmount ? liveTotal + cashAmount : liveTotal;
 
   // Build target portfolio using totalValue (which includes new cash in add-cash mode)
   const portfolioForTargets = { ...portfolio, totalValue };
@@ -221,6 +292,14 @@ export function rebalance(
 
       buyBudget -= amount;
     }
+
+    // Top up remaining budget into underweight tickers (drives undeployed cash to ~0)
+    buyBudget = topUpBudget(
+      buyBudget,
+      buyTargets.map((b) => b.state),
+      trades,
+      totalValue
+    );
 
     // Add sell trades
     trades.push(...sellTrades);
@@ -301,23 +380,9 @@ export function rebalance(
       });
     }
 
-    // Allocate remaining cash from rounding to largest-shortfall ticker
-    if (remainingCash > 0 && sorted.length > 0) {
-      const largestShortfall = sorted[0];
-      const extraShares = roundShares(
-        remainingCash / largestShortfall.price,
-        );
-      if (extraShares > 0) {
-        const existing = trades.find(
-          (t) => t.ticker === largestShortfall.ticker
-        );
-        if (existing) {
-          existing.shares += extraShares;
-          existing.amount = existing.shares * existing.price;
-          remainingCash -= extraShares * largestShortfall.price;
-        }
-      }
-    }
+    // Greedy top-up: distribute leftover cash across underweight tickers in
+    // drift order, one share at a time, until no more shares fit.
+    remainingCash = topUpBudget(remainingCash, sorted, trades, totalValue);
 
     undeployedCash = remainingCash + excess;
   }
