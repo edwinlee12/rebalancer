@@ -37,13 +37,17 @@ export default function Home() {
   const handlePortfolioLoaded = useCallback(
     async (p: Portfolio) => {
       store.handlePortfolioLoaded(p);
+      // Always land on the Targets screen after a fresh upload, even if the
+      // URL still has #recommendations or #trades from a prior session.
+      store.setStep('targets');
+      window.history.replaceState(null, '', '#targets');
       const tickers = p.sectors.flatMap((s) =>
         s.holdings.map((h) => h.ticker)
       );
       await store.fetchPrices(tickers);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [store.handlePortfolioLoaded, store.fetchPrices]
+    [store.handlePortfolioLoaded, store.fetchPrices, store.setStep]
   );
 
   // Handle browser back
