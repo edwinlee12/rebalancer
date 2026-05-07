@@ -69,12 +69,6 @@ export function parsePortfolioAppraisal(buffer: ArrayBuffer): Portfolio {
     );
   }
 
-  // Extract account info from rows before header
-  let accountName: string | undefined;
-  if (rows.length > 3 && typeof rows[2]?.[0] === 'string') {
-    accountName = rows[2][0].trim();
-  }
-
   // Find separator row after header
   let dataStartIndex = headerRowIndex + 1;
   for (let i = headerRowIndex + 1; i < Math.min(rows.length, headerRowIndex + 5); i++) {
@@ -190,6 +184,5 @@ export function parsePortfolioAppraisal(buffer: ArrayBuffer): Portfolio {
     sectors,
     totalValue,
     cashValue,
-    accountName,
   };
 }

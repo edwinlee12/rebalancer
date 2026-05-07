@@ -26,8 +26,6 @@ export interface Portfolio {
   sectors: Sector[];
   totalValue: number;
   cashValue: number;
-  accountName?: string;
-  reportDate?: string;
 }
 
 export interface SectorTarget {

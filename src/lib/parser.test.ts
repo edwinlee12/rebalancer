@@ -11,10 +11,6 @@ describe('parser', () => {
   describe('Report 1', () => {
     const portfolio = parsePortfolioAppraisal(loadReport('Report 1.xlsx'));
 
-    test('extracts account name', () => {
-      expect(portfolio.accountName).toBe('John Piper');
-    });
-
     test('extracts correct number of sectors', () => {
       // Consumer Discretionary, Consumer Staples, Financials, Health Care,
       // Industrials, Info Tech, Communication Services, Utilities,
@@ -122,10 +118,6 @@ describe('parser', () => {
         0
       );
       expect(count).toBe(29);
-    });
-
-    test('extracts account name', () => {
-      expect(portfolio.accountName).toBe('Jonathan Edwards');
     });
   });
 
